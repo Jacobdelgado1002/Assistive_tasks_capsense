@@ -6,7 +6,6 @@
 # distance are from the robot wrist to the point chosen) 
 # -------------------------------------------------------
 
-
 import rospy
 import tf
 import numpy as np
