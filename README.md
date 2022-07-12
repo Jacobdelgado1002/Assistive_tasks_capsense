@@ -1,2 +1,2 @@
 # Assistive_tasks_capsense
-Sim2Real transfer of  cleaning tasks
+Sim2Real transfer of assistive tasks
