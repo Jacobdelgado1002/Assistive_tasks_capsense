@@ -67,7 +67,7 @@ class Get_distance(hm.HelloNode):
             # save distances from robot wrist to point
              
             today = date.today()  
-            file = open("/home/jacob/catkin_ws/src/jacob_package/scripts/data_collected/distances_measured/"+str(today)+".txt", "w")
+            file = open("/home/jacob/catkin_ws/src/jacob_package/scripts/data_collected/distances_measured_"+str(today)+".txt", "w")
 
             # for item in range(len(distances)):
             #     file.write(distances[item] + '\n')
