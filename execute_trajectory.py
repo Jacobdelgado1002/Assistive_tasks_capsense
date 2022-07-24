@@ -21,6 +21,7 @@ from std_srvs.srv import Trigger, TriggerRequest, TriggerResponse
 
 from std_msgs.msg import Float64MultiArray
 from std_msgs.msg import MultiArrayDimension
+from select_points import PointAdd
 
 class ExecuteTrajectoryNode(hm.HelloNode):
     def __init__(self):
@@ -48,7 +49,9 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         pose={'joint_head_pan':-1.6,'joint_head_tilt':-.50}
         #, 'translate_mobile_base': 0s
         self.move_to_pose(pose)
-        rospy.sleep(1)
+        # pose={'translate_mobile_base': 0}
+        # self.move_to_pose(pose)
+        # rospy.sleep(1)
         
         return TriggerResponse(
             success=True,
@@ -110,8 +113,8 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         self.move_to_pose(pose)
         rospy.sleep(1)
 
-        # move the lift up to 75 cm
-        pose={'joint_lift':0.75}
+        # move the lift up to 74.5 cm
+        pose={'joint_lift':0.745}
         self.move_to_pose(pose)
         rospy.sleep(4) 
 
@@ -131,9 +134,13 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         rospy.sleep(15)
 
         # move the lift up to 83 cm (lift tool up)
-        pose={'joint_lift':0.83}
+        pose={'joint_lift':0.83, 'wrist_extension':0}
         self.move_to_pose(pose)
         rospy.sleep(5)
+
+        pose={'joint_lift':0.60, 'joint_head_pan':-1.6,'joint_head_tilt':-.50}
+        self.move_to_pose(pose)
+        rospy.sleep(5)        
 
         return TriggerResponse(
             success=True,
@@ -141,8 +148,12 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         )
 
     # setup robot arm at 5 cm above the target for collecting data
-    def ready_arm(self, request):
+    def ready_arm_task1(self, request):
         rospy.loginfo('lower_until_contact')
+
+        pose={'joint_lift':0.85}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
 
         # extend end of arm out to 20 cm 
         pose={'wrist_extension':0.20}
@@ -155,7 +166,7 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         if (current_effort_pitch<0.5):
             self.wrist_contact_detector.move_until_contact('joint_lift',.05,-1,self.move_to_pose)
             
-
+        
         #rospy.loginfo(self.wrist_contact_detector.not_stopped())
         """ pose={'joint_lift':current_pos_lift+zdiff}
         self.move_to_pose(pose) """
@@ -170,18 +181,183 @@ class ExecuteTrajectoryNode(hm.HelloNode):
             success=True,
             message='Completed Arm Setup'
         )
+    
+    def ready_arm_task2(self, request):
+        rospy.loginfo('ready_arm_task2')
 
-    # collect data by extending arm out pass points of interest
-    def collect_data(self, request):
+        pose={'joint_lift':1.09}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
 
-        # extend end of arm to 45 cm
-        pose={'wrist_extension':0.45}
+
+        pose={'wrist_extension':0.20, 'joint_wrist_pitch':0,'joint_wrist_roll':0,'joint_wrist_yaw':0}
         self.move_to_pose(pose)
         rospy.sleep(5)
         
         return TriggerResponse(
             success=True,
+            message='Completed Arm Setup'
+        )
+
+    def ready_arm_task3(self, request):
+        rospy.loginfo('ready_arm_task3')
+
+        pose={'joint_lift':0.85}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+
+        # extend end of arm out to 20 cm 
+        pose={'wrist_extension':0.20}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+          
+        # move down until contact detected
+        p = self.joint_states.name.index('joint_wrist_pitch')
+        current_effort_pitch = self.joint_states.effort[p]
+        if (current_effort_pitch<0.5):
+            self.wrist_contact_detector.move_until_contact('joint_lift',.05,-1,self.move_to_pose)
+        
+        rospy.sleep(5)
+        # retract end of arm to 0 cm and make sure pitch, roll and yaw are at 0 
+        pose={'joint_wrist_pitch':0,'joint_wrist_roll':0,'joint_wrist_yaw':0, 'translate_mobile_base': -0.5}
+        self.move_to_pose(pose)
+
+    def ready_arm_task4(self, request):
+        rospy.loginfo('ready_arm_task4')
+
+        pose={'joint_lift':0.85}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+
+        # extend end of arm out to 20 cm 
+        pose={'wrist_extension':0.20}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+          
+        # move down until contact detected
+        p = self.joint_states.name.index('joint_wrist_pitch')
+        current_effort_pitch = self.joint_states.effort[p]
+        if (current_effort_pitch<0.5):
+            self.wrist_contact_detector.move_until_contact('joint_lift',.05,-1,self.move_to_pose)
+        
+        rospy.sleep(5)
+        # retract end of arm to 0 cm and make sure pitch, roll and yaw are at 0 
+        pose={'joint_wrist_pitch':0,'joint_wrist_roll':0,'joint_wrist_yaw':-1.38}
+        self.move_to_pose(pose)
+         
+        
+        return TriggerResponse(
+            success=True,
+            message='Completed Arm Setup'
+        )
+    
+    def ready_arm_task5(self, request):
+        rospy.loginfo('ready_arm_task5')
+
+        pose={'joint_lift':0.95}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+
+        # extend end of arm out to 30 cm 
+        pose={'wrist_extension':0.35}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+          
+        # retract end of arm to 0 cm and make sure pitch, roll and yaw are at 0 
+        pose={'joint_wrist_pitch':0,'joint_wrist_roll':0,'joint_wrist_yaw':0}
+        self.move_to_pose(pose)
+         
+        
+        return TriggerResponse(
+            success=True,
+            message='Completed Arm Setup'
+        )
+
+    def ready_arm_task7(self, request):
+        rospy.loginfo('lower_until_contact')
+
+        pose={'joint_lift':0.85}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+
+        # extend end of arm out to 20 cm 
+        pose={'wrist_extension':0.20}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+
+        # retract end of arm to 0 cm and make sure pitch, roll and yaw are at 0 
+        pose={'joint_wrist_pitch':0,'joint_wrist_roll':0,'joint_wrist_yaw':0}
+        self.move_to_pose(pose)
+        rospy.sleep(5) 
+        
+        return TriggerResponse(
+            success=True,
+            message='Completed Arm Setup'
+        )
+
+    # collect data by extending arm out pass points of interest
+    def data_collection(self, request):
+
+        self.alignment(request)
+        # execfile("/home/jacob/catkin_ws/src/jacob_package/scripts/camera_pointcloud.py")
+        exec(open("camera_pointcloud.py").read())
+        # exec(open("select_points.py").read())
+
+
+        # execfile("/home/jacob/catkin_ws/src/jacob_package/scripts/select_points.py")
+        # self.ready_arm(request)
+        # extend end of arm to 45 cm
+        # pose={'wrist_extension':0.45}
+        # self.move_to_pose(pose)
+        # rospy.sleep(5)
+
+        # index = self.joint_states.name.index('joint_gripper_finger_right')
+        # print(self.joint_states.position[index])
+
+        # listener.waitForTransform('joint_gripper_finger_right','link_aruco_top_wrist',rospy.Time(0.0),rospy.Duration(1.0))
+        # (trans,rot)=listener.lookupTransform('joint_gripper_finger_right','link_aruco_top_wrist',rospy.Time(0.0))
+        
+        return TriggerResponse(
+            success=True,
             message='Collected Data'
+        )
+
+    # used to reset position for next trial run
+    def reset_trial(self, request):
+
+        # extend end of arm out to 0 cm (used for task1)
+        # pose={'wrist_extension':0.0}
+        # self.move_to_pose(pose)
+        # rospy.sleep(3)
+
+        # lift end of arm out to 1.09 (used for task2)
+        # pose={'joint_lift':1.09}
+        # self.move_to_pose(pose)
+        # rospy.sleep(3)
+
+        # return base to initial position (used for task3)
+        pose={'translate_mobile_base': 0.32}
+        self.move_to_pose(pose)
+        rospy.sleep(3)
+
+        # return yaw to initial position (used for task4)
+        # pose={'joint_wrist_yaw':1.5}
+        # pose={'joint_wrist_yaw':-1.38}
+        # self.move_to_pose(pose)
+        # rospy.sleep(3)
+
+        # return pitch to initial position (used for task5)
+        # pose={'joint_wrist_pitch':0}
+        # self.move_to_pose(pose)
+        # rospy.sleep(3)
+
+        pose={'joint_lift':0.85}
+        self.move_to_pose(pose)
+        rospy.sleep(3)
+
+        return TriggerResponse(
+            success=True,
+            message='Completed reset'
         )
 
 
@@ -199,13 +375,41 @@ class ExecuteTrajectoryNode(hm.HelloNode):
                                                          Trigger,
                                                          self.ready_camera)
 
-        self.trigger_write_hello_service = rospy.Service('ready_arm',
+        self.trigger_write_hello_service = rospy.Service('ready_arm_task1',
                                                          Trigger,
-                                                         self.ready_arm)
+                                                         self.ready_arm_task1)
+
+        self.trigger_write_hello_service = rospy.Service('ready_arm_task2',
+                                                         Trigger,
+                                                         self.ready_arm_task2)
+
+        self.trigger_write_hello_service = rospy.Service('ready_arm_task3',
+                                                         Trigger,
+                                                         self.ready_arm_task3)
+
+        self.trigger_write_hello_service = rospy.Service('ready_arm_task4',
+                                                         Trigger,
+                                                         self.ready_arm_task4)
+
+        self.trigger_write_hello_service = rospy.Service('ready_arm_task5',
+                                                         Trigger,
+                                                         self.ready_arm_task5)                                                   
+
+        self.trigger_write_hello_service = rospy.Service('ready_arm_task7',
+                                                         Trigger,
+                                                         self.ready_arm_task7) 
 
         self.trigger_write_hello_service = rospy.Service('align_tool',
                                                          Trigger,
                                                          self.alignment)
+
+        self.trigger_write_hello_service = rospy.Service('data_collection',
+                                                         Trigger,
+                                                         self.data_collection)
+
+        self.trigger_write_hello_service = rospy.Service('reset_trial',
+                                                         Trigger,
+                                                         self.reset_trial)                                                          
 
         # self.trigger_write_hello_service = rospy.Service('collect_data',
         #                                                  Trigger,

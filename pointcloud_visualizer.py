@@ -14,6 +14,6 @@ import open3d as o3d # installed by running: <pip install open3d-python>
 #     pc = o3d.create_point_cloud_from_rgbd_image(rgbd, intrinsic, Rt)
 #     o3d.visualization.draw_geometries([pc])
 
-pcd = o3d.io.read_point_cloud("Point_clouds/2022-07-09.ply")
+pcd = o3d.io.read_point_cloud("Point_clouds/2022-07-21.ply")
 
 o3d.visualization.draw_geometries([pcd])
