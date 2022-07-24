@@ -1373,8 +1373,6 @@ class Get_distance(hm.HelloNode):
                 count = count + 1
                 new_pose = {'translate_mobile_base': -0.005}
                 self.move_to_pose(new_pose)
-
-
              
             today = date.today()  
 
