@@ -326,9 +326,9 @@ class ExecuteTrajectoryNode(hm.HelloNode):
     def reset_trial(self, request):
 
         # extend end of arm out to 0 cm (used for task1)
-        # pose={'wrist_extension':0.0}
-        # self.move_to_pose(pose)
-        # rospy.sleep(3)
+        pose={'wrist_extension':0.0}
+        self.move_to_pose(pose)
+        rospy.sleep(3)
 
         # lift end of arm out to 1.09 (used for task2)
         # pose={'joint_lift':1.09}
@@ -336,9 +336,9 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         # rospy.sleep(3)
 
         # return base to initial position (used for task3)
-        pose={'translate_mobile_base': 0.32}
-        self.move_to_pose(pose)
-        rospy.sleep(3)
+        # pose={'translate_mobile_base': 0.32}
+        # self.move_to_pose(pose)
+        # rospy.sleep(3)
 
         # return yaw to initial position (used for task4)
         # pose={'joint_wrist_yaw':1.5}
@@ -351,13 +351,26 @@ class ExecuteTrajectoryNode(hm.HelloNode):
         # self.move_to_pose(pose)
         # rospy.sleep(3)
 
-        pose={'joint_lift':0.85}
-        self.move_to_pose(pose)
-        rospy.sleep(3)
+        # pose={'joint_lift':0.85}
+        # self.move_to_pose(pose)
+        # rospy.sleep(3)
 
         return TriggerResponse(
             success=True,
             message='Completed reset'
+        )
+
+    def data_test(self, request):
+        rospy.loginfo('data_test')
+
+        # extend end of arm out to 30 cm 
+        pose={'wrist_extension':0.45}
+        self.move_to_pose(pose)
+        rospy.sleep(5)
+        
+        return TriggerResponse(
+            success=True,
+            message='Completed data_test'
         )
 
 
@@ -411,6 +424,10 @@ class ExecuteTrajectoryNode(hm.HelloNode):
                                                          Trigger,
                                                          self.reset_trial)                                                          
 
+        self.trigger_write_hello_service = rospy.Service('data_test',
+                                                         Trigger,
+                                                         self.data_test) 
+                                                         
         # self.trigger_write_hello_service = rospy.Service('collect_data',
         #                                                  Trigger,
         #                                                  self.collect_data)   

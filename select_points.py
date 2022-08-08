@@ -17,6 +17,7 @@ import numpy as np
 from std_msgs.msg import Float64MultiArray
 from std_msgs.msg import MultiArrayDimension
 from datetime import date
+import numpy as np
 
 class PointAdd:
 
@@ -27,10 +28,15 @@ class PointAdd:
             t = geometry_msgs.msg.TransformStamped()
             t.header.frame_id="camera_link"
             t.child_frame_id="sel_point"
+            # t.header.frame_id="sel_point"
+            # t.child_frame_id="base_link"
             t.header.stamp=rospy.Time.now()
-            t.transform.translation.x=data[0]
-            t.transform.translation.y=data[1]
-            t.transform.translation.z=data[2]
+            # t.transform.translation.x=data[2]
+            # t.transform.translation.y=-data[1]
+            # t.transform.translation.z=data[0]
+            t.transform.translation.x=data[2]
+            t.transform.translation.y=-data[0]
+            t.transform.translation.z=-data[1]
             
             t.transform.rotation.x=0
             t.transform.rotation.y=0
@@ -40,7 +46,8 @@ class PointAdd:
             tfm = tf2_msgs.msg.TFMessage([t])
             self.pub_tf.publish(tfm)
     
-
+            # t.header.frame_id="camera_link"
+            # t.child_frame_id="sel_point_{}",name
 
 if __name__ == '__main__':
     try:
@@ -50,7 +57,14 @@ if __name__ == '__main__':
             
             today = date.today()
             # pcd = o3d.io.read_point_cloud("/home/jacob/catkin_ws/src/jacob_package/scripts/Point_clouds/2022-07-21.ply") # read file.ply to select point(s)
-            pcd = o3d.io.read_point_cloud("/home/jacob/catkin_ws/src/jacob_package/scripts/Point_clouds/"+str(today)+".ply") # read file.ply to select point(s)            
+            # pcd = o3d.io.read_point_cloud("/home/jacob/catkin_ws/src/jacob_package/scripts/Point_clouds/"+str(today)+".ply") # read file.ply to select point(s)            
+
+            xyz = np.load("./tmp_pc.npy")
+            xyz = xyz.reshape(-1, 3)
+            pcd = o3d.geometry.PointCloud()
+            pcd.points = o3d.utility.Vector3dVector(xyz)
+            
+            
             R = np.identity(3)  
             extent = np.ones(3)/.65 # trying to create a bounding box below 1 unit
             center = np.zeros(3) 
@@ -62,12 +76,19 @@ if __name__ == '__main__':
             
             try:
 
-                listener.waitForTransform('electrode3','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                (trans1,rot1)=listener.lookupTransform('electrode3','base_link',rospy.Time(0.0))
+                listener.waitForTransform('base_link','electrode3',rospy.Time(0.0),rospy.Duration(1.0))
+                (trans1,rot1)=listener.lookupTransform('base_link','electrode3',rospy.Time(0.0))
                 p1 = trans1
-                listener.waitForTransform('electrode4','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                (trans2,rot2)=listener.lookupTransform('electrode4','base_link',rospy.Time(0.0))
+                listener.waitForTransform('base_link','electrode4',rospy.Time(0.0),rospy.Duration(1.0))
+                (trans2,rot2)=listener.lookupTransform('base_link','electrode4',rospy.Time(0.0))
                 p2 = trans2
+
+                # listener.waitForTransform('electrode3','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+                # (trans1,rot1)=listener.lookupTransform('electrode3','base_link',rospy.Time(0.0))
+                # p1 = trans1
+                # listener.waitForTransform('electrode4','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+                # (trans2,rot2)=listener.lookupTransform('electrode4','base_link',rospy.Time(0.0))
+                # p2 = trans2
 
             except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                 rospy.loginfo("tf exception")
@@ -95,7 +116,8 @@ if __name__ == '__main__':
             # listener.waitForTransform('electrode6','sel_point',rospy.Time(0.0),rospy.Duration(1.0))
             # (trans6,rot6)=listener.lookupTransform('electrode6','sel_point',rospy.Time(0.0))
 
-
+            # filter pointcloud to ignore table and capture the arm. 
+            # Might need to change tressholds for d and theta if setup is changed
             filtered_pointcloud = []
 
             # iterated over the position of each of the points in the pointcloud
@@ -113,18 +135,29 @@ if __name__ == '__main__':
                 # find the angle between the axis and trajectory vectors
                 theta = np.arccos(np.clip(np.dot(axis_vector, traj_vector), -1.0, 1.0))
 
-                if d < 0.11 and theta < 2.0:
+                # if d < 0.20 and theta < 2.50:
+                # if d < 0.14 and theta < 3.00:
+                if d < 0.22 and theta < 2.65:
                     filtered_pointcloud.append(point)
 
+            # task flag
+            # 1 = view filtered pointcloud over ninitial pointcloud (both in the same window)
+            # 2 = choose point manually
+            # default(else) = choose closest point on the pointcloud
 
-            # view filtered pointcloud over ninitial pointcloud (both in the same window)
+            flag = 3
 
-            # pcd_sel = o3d.geometry.PointCloud()
-            # pcd_sel.points = o3d.utility.Vector3dVector(np.asarray(filtered_pointcloud))
-            # pcd_sel.paint_uniform_color([1, 0, 0])
-            # pcd.paint_uniform_color([0,1,0])
-            # o3d.visualization.draw_geometries([pcd, pcd_sel])
-            # exit()
+            if flag == 1:
+
+                # view filtered pointcloud over ninitial pointcloud (both in the same window)
+
+                pcd_sel = o3d.geometry.PointCloud()
+                pcd_sel.points = o3d.utility.Vector3dVector(np.asarray(filtered_pointcloud))
+                pcd_sel.paint_uniform_color([1, 0, 0])
+                pcd.paint_uniform_color([0,1,0])
+                o3d.visualization.draw_geometries([pcd, pcd_sel])
+                exit()
+            
 
             # down sample initial pointcloud (used as an alternative to pointcloud filtering above)
 
@@ -145,46 +178,52 @@ if __name__ == '__main__':
             # o3d.visualization.draw_geometries([pcd])
             # exit()
 
-            magnitudes = []
-            for item in pcd_array:
-                magnitudes.append(np.linalg.norm(item))
+            if flag == 2:
+            
+                # used for selecting point manually
 
-            # print(magnitudes)
-            # exit()
+                vis = o3d.visualization.VisualizerWithEditing()
+                vis.create_window()
+                vis.add_geometry(pcd)
+                vis.run()  
+                vis.destroy_window()
+                pdata = vis.get_picked_points()
+                print("p_data is: ", pdata)
+                (x,y,z)=pcd.points[pdata[0]]
+            
+            else:
+                magnitudes = []
+                for item in pcd_array:
+                    magnitudes.append(np.linalg.norm(item))
 
-            closest = min(magnitudes)
-            # print(closest)
-            closest_index = magnitudes.index(closest)
-            # print(magnitudes.index(closest))
-            # exit()
-            pcd_sel = o3d.geometry.PointCloud()
+                # print(magnitudes)
+                # exit()
 
-            pcd_sel.points = o3d.utility.Vector3dVector(np.asarray(pcd.points)[closest_index].reshape(1, 3))
-            # print(np.asarray(pcd_sel.points))
-            # exit()
-            pcd_sel.paint_uniform_color([1, 0, 0])
-            pcd.paint_uniform_color([0,1,0])
-            o3d.visualization.draw_geometries([pcd, pcd_sel])
-            # o3d.visualization.draw_geometries([pcd_sel])
+                closest = min(magnitudes)
+                # print(closest)
+                closest_index = magnitudes.index(closest)
+                # print(magnitudes.index(closest))
+                # exit()
+                pcd_sel = o3d.geometry.PointCloud()
 
-            (x,y,z) = pcd.points[closest_index]
-            # print(x)
-            # print(y)
-            # print(z)
-            # exit()
+                pcd_sel.points = o3d.utility.Vector3dVector(np.asarray(pcd.points)[closest_index].reshape(1, 3))
+                # print(np.asarray(pcd_sel.points))
+                # exit()
+                pcd_sel.paint_uniform_color([1, 0, 0])
+                pcd.paint_uniform_color([0,1,0])
+                o3d.visualization.draw_geometries([pcd, pcd_sel])
+                # o3d.visualization.draw_geometries([pcd_sel])
+
+                (x,y,z) = pcd.points[closest_index]
+
+                
+                # print(x)
+                # print(y)
+                # print(z)
+                # exit()
 
 
-            # used for selecting point manually
-
-            # vis = o3d.visualization.VisualizerWithEditing()
-            # vis.create_window()
-            # vis.add_geometry(pcd)
-            # vis.run()  
-            # vis.destroy_window()
-            # pdata = vis.get_picked_points()
-            # (x,y,z)=pcd.points[pdata[0]]
-
-            (x,y,z)=(-x,-y,-z)
+            # (x,y,z)=(-x,-y,-z)
 
             # print(pdata)
             # # print(pcd.points[pdata[0]])
@@ -193,6 +232,10 @@ if __name__ == '__main__':
             # print(z)
             # exit()
 
+            # min_z_idx = np.argmin(xyz[:, 2])
+            # x, y, z = xyz[min_z_idx]
+            ar = np.array([x, y , z])
+            print("The distance is: ", np.linalg.norm(ar))
             temp=PointAdd([x,y,z])
             rospy.spin()
             #rospy.sleep(2)

@@ -55,6 +55,8 @@ class Get_distance(hm.HelloNode):
             translations4 = []
             translations5 = []
             translations6 = []
+            ar1_list = []
+            ar2_list = []
             # rotations1 = []
             # rotations2 = []
             # rotations3 = []
@@ -84,89 +86,215 @@ class Get_distance(hm.HelloNode):
             #         rot_iteration.append(rot1)
             #     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             #         rospy.loginfo("tf exception")
+            
+            # while(self.joint_states.position[index] < 0.43):
+            #     # trans_iteration = []
+            #     # rot_iteration = []
+            #     try:
+            #         listener.waitForTransform('base_link','sel_point',rospy.Time(0.0),rospy.Duration(1.0))
+            #         (trans_b,rot_b)=listener.lookupTransform('base_link','sel_point',rospy.Time(0.0))
 
-            while(self.joint_states.position[index] < 0.43):
+            #         listener.waitForTransform('base_link','electrode3',rospy.Time(0.0),rospy.Duration(1.0))
+            #         (trans1,rot1)=listener.lookupTransform('base_link','electrode3',rospy.Time(0.0))
+                
+                    
+
+            #         # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans_b,rot_b)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
+            #         # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
+            #         ar1 = np.array(trans1)
+            #         ar2 = np.array(trans_b)
+            #         subs = list(np.subtract(ar1, ar2))
+
+            #         # rospy.loginfo("This is the ar1: ", ar1)
+            #         # rospy.loginfo("This is the ar2: ", ar2)
+            #         # rospy.loginfo("This is the substraction: ", subs)
+            #         # print("This is the ar1: ", ar1)
+            #         # print("This is the ar2: ", ar2)
+            #         # print("This is the substraction: ", subs)
+            #         ar1_list.append(ar1)
+            #         ar2_list.append(ar2)
+            #         # # # translations1 = []
+            #         # # # rotations1 = []
+            #         translations1.append(subs)
+            #         # # # rotations1.append(rot1)
+                
+
+            #         # listener.waitForTransform('electrode2','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans2,rot2)=listener.lookupTransform('electrode2','base_link',rospy.Time(0.0))
+            #         # # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
+            #         # # trans_iteration.append(trans2)
+            #         # # rot_iteration.append(rot2)
+            #         # ar1 = np.array(trans2)
+            #         # ar2 = np.array(trans_b)
+            #         # subs = list(np.subtract(ar1, ar2))
+
+                    
+            #         # translations2.append(subs)
+            #         # # rotations2.append(rot2)
+
+            #         # listener.waitForTransform('electrode3','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans3,rot3)=listener.lookupTransform('electrode3','base_link',rospy.Time(0.0))
+            #         # # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
+            #         # # trans_iteration.append(trans3)
+            #         # # rot_iteration.append(rot3)
+            #         # ar1 = np.array(trans3)
+            #         # ar2 = np.array(trans_b)
+            #         # subs = list(np.subtract(ar1, ar2))
+
+            #         # translations3.append(subs)
+            #         # # rotations3.append(rot3)
+
+            #         # listener.waitForTransform('electrode4','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans4,rot4)=listener.lookupTransform('electrode4','base_link',rospy.Time(0.0))
+            #         # # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
+            #         # # trans_iteration.append(trans4)
+            #         # # rot_iteration.append(rot4)
+            #         # ar1 = np.array(trans4)
+            #         # ar2 = np.array(trans_b)
+            #         # subs = list(np.subtract(ar1, ar2))
+
+            #         # translations4.append(subs)
+            #         # # rotations4.append(rot4)
+
+            #         # listener.waitForTransform('electrode5','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans5,rot5)=listener.lookupTransform('electrode5','base_link',rospy.Time(0.0))
+            #         # # trans_iteration.append(trans5)
+            #         # # rot_iteration.append(rot5)
+            #         # ar1 = np.array(trans5)
+            #         # ar2 = np.array(trans_b)
+            #         # subs = list(np.subtract(ar1, ar2))
+
+            #         # translations5.append(subs)
+            #         # # rotations5.append(rot5)
+
+            #         # listener.waitForTransform('electrode6','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans6,rot6)=listener.lookupTransform('electrode6','base_link',rospy.Time(0.0))
+            #         # # trans_iteration.append(trans6)
+            #         # # rot_iteration.append(rot6)
+            #         # ar1 = np.array(trans6)
+            #         # ar2 = np.array(trans_b)
+            #         # subs = list(np.subtract(ar1, ar2))
+
+            #         # translations6.append(subs)
+            #         # rotations6.append(rot6)
+                
+            #         # translations.append(trans_iteration)
+            #         # rotations.append(rot_iteration)
+
+            #         # listener.waitForTransform('root_tool', 'sel_point', rospy.Time(0.0),rospy.Duration(1.0))
+            #         # (trans,rot)=listener.lookupTransform('root_tool', 'sel_point', rospy.Time(0.0))
+
+            #         # rospy.loginfo("wrist to point: " + str((trans,rot)))
+            #         # current_pose = self.joint_states.position[index]
+            #         # new_pose = {'wrist_extension': current_pose + 0.01}
+            #         # self.move_to_pose(new_pose)
+            #     except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            #         rospy.loginfo("tf exception")
+                
+            #     current_pose = self.joint_states.position[index]
+            #     new_pose = {'wrist_extension': current_pose + 0.005}
+            #     self.move_to_pose(new_pose)
+            nr = 0
+            while(nr < 10):
                 # trans_iteration = []
                 # rot_iteration = []
                 try:
-                    listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans_b,rot_b)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
+                    # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+                    # (trans_b,rot_b)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
 
-                    listener.waitForTransform('electrode1','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans1,rot1)=listener.lookupTransform('electrode1','base_link',rospy.Time(0.0))
+                    # listener.waitForTransform('electrode1','base_link',rospy.Time(0.0),rospy.Duration(1.0))
+                    # (trans1,rot1)=listener.lookupTransform('electrode1','base_link',rospy.Time(0.0))
+
+                    listener.waitForTransform('base_link','link_aruco_top_wrist',rospy.Time(0.0),rospy.Duration(1.0))
+                    (trans1,rot1)=listener.lookupTransform('base_link','link_aruco_top_wrist',rospy.Time(0.0))
+                    
+
                     # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
                     # (trans_b,rot_b)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
                     # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
                     # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
                     ar1 = np.array(trans1)
-                    ar2 = np.array(trans_b)
-                    subs = list(np.subtract(ar1, ar2))
+                    subs = ar1
 
+                    # ar1_list.append(ar1)
+                    # ar2_list.append(ar2)
+                    # rospy.loginfo("This is the ar1: ", ar1)
+                    # rospy.loginfo("This is the ar2: ", ar2)
+                    # rospy.loginfo("This is the substraction: ", subs)
+                    # print("This is the ar1: ", ar1)
+                    # print("This is the ar2: ", ar2)
+                    # print("This is the substraction: ", subs)
                     # # # translations1 = []
                     # # # rotations1 = []
                     translations1.append(subs)
                     # # # rotations1.append(rot1)
                 
 
-                    listener.waitForTransform('electrode2','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans2,rot2)=listener.lookupTransform('electrode2','base_link',rospy.Time(0.0))
+                    listener.waitForTransform('base_link','link_aruco_right_base',rospy.Time(0.0),rospy.Duration(1.0))
+                    (trans2,rot2)=listener.lookupTransform('base_link','link_aruco_right_base',rospy.Time(0.0))
                     # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
                     # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
                     # trans_iteration.append(trans2)
                     # rot_iteration.append(rot2)
                     ar1 = np.array(trans2)
-                    ar2 = np.array(trans_b)
-                    subs = list(np.subtract(ar1, ar2))
+                    subs = ar1
 
+                    
                     translations2.append(subs)
                     # rotations2.append(rot2)
 
-                    listener.waitForTransform('electrode3','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans3,rot3)=listener.lookupTransform('electrode3','base_link',rospy.Time(0.0))
+                    listener.waitForTransform('base_link','link_aruco_left_base',rospy.Time(0.0),rospy.Duration(1.0))
+                    (trans3,rot3)=listener.lookupTransform('base_link','link_aruco_left_base',rospy.Time(0.0))
                     # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
                     # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
                     # trans_iteration.append(trans3)
                     # rot_iteration.append(rot3)
                     ar1 = np.array(trans3)
-                    ar2 = np.array(trans_b)
-                    subs = list(np.subtract(ar1, ar2))
+                    subs = ar1
 
                     translations3.append(subs)
                     # rotations3.append(rot3)
 
-                    listener.waitForTransform('electrode4','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans4,rot4)=listener.lookupTransform('electrode4','base_link',rospy.Time(0.0))
+                    listener.waitForTransform('base_link','link_aruco_shoulder',rospy.Time(0.0),rospy.Duration(1.0))
+                    (trans4,rot4)=listener.lookupTransform('base_link','link_aruco_shoulder',rospy.Time(0.0))
                     # listener.waitForTransform('sel_point','base_link',rospy.Time(0.0),rospy.Duration(1.0))
                     # (trans2,rot2)=listener.lookupTransform('sel_point','base_link',rospy.Time(0.0))
                     # trans_iteration.append(trans4)
                     # rot_iteration.append(rot4)
                     ar1 = np.array(trans4)
-                    ar2 = np.array(trans_b)
-                    subs = list(np.subtract(ar1, ar2))
+                    subs = ar1
 
                     translations4.append(subs)
                     # rotations4.append(rot4)
 
-                    listener.waitForTransform('electrode5','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans5,rot5)=listener.lookupTransform('electrode5','base_link',rospy.Time(0.0))
+
+                    listener.waitForTransform('base_link','electrode2',rospy.Time(0.0),rospy.Duration(1.0))
+                    (trans5,rot5)=listener.lookupTransform('base_link','electrode2',rospy.Time(0.0))
                     # trans_iteration.append(trans5)
                     # rot_iteration.append(rot5)
                     ar1 = np.array(trans5)
-                    ar2 = np.array(trans_b)
-                    subs = list(np.subtract(ar1, ar2))
+                    subs = ar1
 
                     translations5.append(subs)
                     # rotations5.append(rot5)
 
-                    listener.waitForTransform('electrode6','base_link',rospy.Time(0.0),rospy.Duration(1.0))
-                    (trans6,rot6)=listener.lookupTransform('electrode6','base_link',rospy.Time(0.0))
+                    listener.waitForTransform('base_link','sel_point',rospy.Time(0.0),rospy.Duration(1.0))
+                    (trans6,rot6)=listener.lookupTransform('base_link','sel_point',rospy.Time(0.0))
                     # trans_iteration.append(trans6)
                     # rot_iteration.append(rot6)
                     ar1 = np.array(trans6)
-                    ar2 = np.array(trans_b)
-                    subs = list(np.subtract(ar1, ar2))
 
+                    subs = ar1
                     translations6.append(subs)
+                    # trans_iteration.append(trans5)
+                    # rot_iteration.append(rot5)
+                    # rotations5.append(rot5)
+
                     # rotations6.append(rot6)
                 
                     # translations.append(trans_iteration)
@@ -182,11 +310,9 @@ class Get_distance(hm.HelloNode):
                 except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
                     rospy.loginfo("tf exception")
                 
-                current_pose = self.joint_states.position[index]
-                new_pose = {'wrist_extension': current_pose + 0.005}
-                self.move_to_pose(new_pose)
+                nr = nr + 1
 
-
+            
             # while(self.joint_states.position[index] < 0.43):
             #     listener.waitForTransform('link_aruco_top_wrist','sel_point',rospy.Time(0.0),rospy.Duration(1.0))
             #     (trans,rot)=listener.lookupTransform('link_aruco_top_wrist','sel_point',rospy.Time(0.0))
@@ -247,6 +373,18 @@ class Get_distance(hm.HelloNode):
                 for item in sublists:
                     file_trans6.write(str(item) + " ")
                 file_trans6.write("\n")
+
+            file_trans7 = open("/home/jacob/catkin_ws/src/jacob_package/scripts/data_collected/translations"+str(today)+"/dataset"+str(dataset)+"/ar1.txt", "w")
+            for sublists in ar1_list:
+                for item in sublists:
+                    file_trans7.write(str(item) + " ")
+                file_trans7.write("\n")
+
+            file_trans8 = open("/home/jacob/catkin_ws/src/jacob_package/scripts/data_collected/translations"+str(today)+"/dataset"+str(dataset)+"/ar2.txt", "w")
+            for sublists in ar2_list:
+                for item in sublists:
+                    file_trans8.write(str(item) + " ")
+                file_trans8.write("\n")
 
             # # for sublists in translations:
             # #     count = 1
@@ -321,7 +459,9 @@ class Get_distance(hm.HelloNode):
             
 
     
-
+        # print(ar1_list)
+        # print(ar2_list)
+        # exit()
         # pose={'wrist_extension':0.45}
         # self.move_to_pose(pose)
         # rospy.sleep(5)
